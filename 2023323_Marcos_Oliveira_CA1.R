@@ -8,25 +8,18 @@
 # -----------------------------------------------------------
 
 
-### 2. Data on COVID-19 vaccination in the EU/EEA
+### 2. Remove all variables and Load Data
+# it removes all variables stores previously
+rm(list = ls())
+
 # Loading the data and checking the structure of the dataframe
 covid19_vaccination_EU_EEA_df <- read.csv("covid19_vaccination_EU_EEA.csv")
-
-# Checking the dimensions it should have at least 7000 rows and 10 columns
-number_of_rows <- nrow(covid19_vaccination_EU_EEA_df)
-number_of_columns <- ncol(covid19_vaccination_EU_EEA_df)
-
-if (number_of_rows >= 7000 & number_of_columns >= 10) {
-  print("The dataset meets the minimum requirements.")
-} else {
-  print("The dataset does not meet the minimum requirements.")
-}
 
 
 # ------------------------------------------------------------
 
 
-### 3. Installing the packages
+### 3. Installing the packages (if not yet)
 install.packages("tidyverse")
 install.packages("dplyr")
 install.packages('ggthemes')
@@ -39,6 +32,7 @@ install.packages("fastDummies")
 
 
 ### 4. Loading the libraries
+library(Hmisc)
 library(readr)
 library(tidyr)
 library(tidyverse)
@@ -56,7 +50,11 @@ library(fastDummies)
 # -----------------------------------------------------------
 
 
-### 5. Quick look at the dataset in the next tab
+### 5. Describe and open the dataset 
+# Describe this dataset (it may take some time)
+describe(covid19_vaccination_EU_EEA_df)
+
+# Quick look at the dataset in the next tab
 View(covid19_vaccination_EU_EEA_df)
 
 
@@ -65,28 +63,28 @@ View(covid19_vaccination_EU_EEA_df)
 
 ### 6. Data Cleaning
 ##  6.1 Validating Data Types:
-# Checking if the dataframe has correct data types
+# Checking if the dataframe has correct data types (yeah it has)
 str(covid19_vaccination_EU_EEA_df)
-
-# YearWeekISO has "2022-W30" "2022-W22"... lets fix that by extracting year and week number from YearWeekISO
-covid19_vaccination_EU_EEA_df$Year <- as.numeric(substr(covid19_vaccination_EU_EEA_df$YearWeekISO, 1, 4))
-
-# Extract week number using gsub to remove non-numeric characters before the week number
-covid19_vaccination_EU_EEA_df$Week <- as.numeric(gsub(".*W", "", covid19_vaccination_EU_EEA_df$YearWeekISO))
-
-# Display the first few rows of the new columns
-head(covid19_vaccination_EU_EEA_df[c("Year", "Week")])
 
 
 ##  6.2 Missing Values:
-# Counting missing values in each column
+# Showing missing values in each column
 covid19_vaccination_EU_EEA_df %>% summarise_all(funs(sum(is.na(.))))
 
-# Filling missing numeric values with mean
-covid19_vaccination_EU_EEA_df <- covid19_vaccination_EU_EEA_df %>%
-  mutate_if(is.numeric, ~ifelse(is.na(.), mean(., na.rm = TRUE), .))
+# Counting missing values in each column
+missing_count <- covid19_vaccination_EU_EEA_df %>% 
+  summarise(across(everything(), ~sum(is.na(.))))
 
-head(covid19_vaccination_EU_EEA_df)
+# Filling missing values with mean for numeric columns only
+covid19_vaccination_EU_EEA_df <- covid19_vaccination_EU_EEA_df %>%
+  mutate(across(where(is.numeric), ~ifelse(is.na(.), mean(., na.rm = TRUE), .)))
+
+# Displaying all variables with no missing values after imputation
+no_missing_post_imputation <- covid19_vaccination_EU_EEA_df %>% 
+  summarise(across(everything(), ~sum(is.na(.))))
+
+# No missing value using describe:
+describe(covid19_vaccination_EU_EEA_df)
 
 
 ##  6.3 Normalize Data:
@@ -94,38 +92,8 @@ head(covid19_vaccination_EU_EEA_df)
 covid19_vaccination_EU_EEA_df$FirstDosePerCapita <- covid19_vaccination_EU_EEA_df$FirstDose / covid19_vaccination_EU_EEA_df$Population
 covid19_vaccination_EU_EEA_df$SecondDosePerCapita <- covid19_vaccination_EU_EEA_df$SecondDose / covid19_vaccination_EU_EEA_df$Population
 
-# Check the structure of the new normalized columns
-str(covid19_vaccination_EU_EEA_df[c("FirstDosePerCapita", "SecondDosePerCapita")])
-
 # Display the first few rows of the new normalized columns Per Capita
-head(covid19_vaccination_EU_EEA_df[c("FirstDosePerCapita", "SecondDosePerCapita")])
-
-# The values are in a decimal format, which is expected for per capita calculations. 
-# They represent the proportion of the population that has received the first or second dose of the vaccine. 
-# For example, a value of 7.79603e-07 means that approximately 0.000000779603 of the population 
-# (or about 0.78 per million people) have received the first dose.
-
-# Normalizing the vaccination data columns
-vaccination_columns <- c("NumberDosesReceived", "FirstDose", "FirstDoseRefused", 
-                         "SecondDose", "DoseAdditional1", "DoseAdditional2", 
-                         "DoseAdditional3", "DoseAdditional4", "DoseAdditional5", "UnknownDose")
-
-# Loop through each column and create a new per capita column
-for (col in vaccination_columns) {
-  new_col_name <- paste(col, "PerCapita", sep = "")
-  covid19_vaccination_EU_EEA_df[[new_col_name]] <- covid19_vaccination_EU_EEA_df[[col]] / covid19_vaccination_EU_EEA_df$Population
-}
-
-# Check the structure of the new normalized columns
-str(covid19_vaccination_EU_EEA_df)
-
-# Display the first few rows of the new normalized columns
-head(covid19_vaccination_EU_EEA_df)
-
-# Maybe some columns, such as NumberDosesReceivedPerCapita and the additional dose columns
-# (DoseAdditional3PerCapita, DoseAdditional4PerCapita, DoseAdditional5PerCapita, etc.),
-# there are have a lot of zeros. This could be due to either zero values in the original columns
-# or because no data was available for those specific categories at the time the data was collected.
+head(covid19_vaccination_EU_EEA_df[c("ReportingCountry", "FirstDosePerCapita", "SecondDosePerCapita")])
 
 
 # -----------------------------------------------------------
@@ -300,7 +268,6 @@ ggplot(data = correlation_matrix_melted, aes(Var1, Var2, fill = value)) +
 
 
 ### 11. Data Exploratory Analysis (EDA) - Graphics and Descriptive Insights
-### PARECE QUE ESTA REPETINDO O EU JA FIZ, ENTAO, ACHO QUE ESSA PARTE PRECISA SER ESCRITA NO REPORT COM ESSES GRAPHS LA
 ## 11.1 Distribution Plots
 # Histogram for FirstDose
 ggplot(covid19_vaccination_EU_EEA_df, aes(x = FirstDose)) +
