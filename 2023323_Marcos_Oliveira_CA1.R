@@ -39,6 +39,8 @@ library(FactoMineR)
 # Describe this dataset
 describe(covid19_vaccination_EU_EEA_df)
 
+View(covid19_vaccination_EU_EEA_df)
+
 
 # ------------------------------------------------------------------------------
 
@@ -101,8 +103,8 @@ ggplot(covid19_vaccination_EU_EEA_df, aes(x = Vaccine, fill = Vaccine)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 12),
         axis.text.y = element_text(size = 12),
         axis.title = element_text(size = 14),
-        legend.position = "bottom") + # Move legend to the bottom
-  scale_fill_discrete(name = "Vaccine Type") + # Optional: Rename the legend title
+        legend.position = "bottom") +
+  scale_fill_discrete(name = "Vaccine Type") +
   labs(title = "Distribution of Vaccines", y = "Count", x = "Vaccine") +
   theme_minimal()
 
@@ -117,6 +119,29 @@ ggplot(covid19_vaccination_EU_EEA_df, aes(x = TargetGroup, y = FirstDosePerCapit
        y = "First Dose Per Capita",
        x = "Target Group") +
   theme_minimal()
+
+
+## 4. Calculate the total first doses administered per capita for each country
+vaccination_efficiency <- covid19_vaccination_EU_EEA_df %>%
+  group_by(ReportingCountry) %>%
+  summarise(TotalFirstDose = sum(FirstDose, na.rm = TRUE),
+            TotalPopulation = mean(Population, na.rm = TRUE)) %>%
+  mutate(FirstDosePerCapita = TotalFirstDose / TotalPopulation) %>%
+  arrange(desc(FirstDosePerCapita))
+
+# Create a bar plot of vaccination efficiency by country
+efficiency_plot <- ggplot(vaccination_efficiency, aes(x = ReportingCountry, y = FirstDosePerCapita)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  geom_text(aes(label = scales::comma(TotalPopulation)), 
+            position = position_dodge(width = 0.9), 
+            hjust = -0.1, vjust = -0.3, size = 3, angle = 45) +
+  labs(title = "Vaccination Efficiency by Country (First Dose Per Capita)",
+       y = "First Dose Per Capita", x = "Country") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Print the plot
+print(efficiency_plot)
 
 
 # ------------------------------------------------------------------------------
@@ -137,11 +162,8 @@ encoded_df <- model.matrix(~ ReportingCountry + Region + TargetGroup + Vaccine -
 numeric_data <- covid19_vaccination_EU_EEA_df %>% select(FirstDose, Population, FirstDosePerCapita, SecondDosePerCapita)
 prepared_df <- cbind(numeric_data, encoded_df)
 
-# View the first few rows of the prepared dataframe
+# View the first few rows of the prepared dataframe (please wait, it might take some time)
 head(prepared_df)
-
-# Check data types before PCA
-str(prepared_df_for_pca)
 
 
 ### PCA
@@ -165,3 +187,5 @@ pca_summary$importance
 # The loadings of the first few principal components can be inspected to determine
 # which variables contribute most to each component.
 loadings <- pca_result$rotation
+
+View(loadings)
