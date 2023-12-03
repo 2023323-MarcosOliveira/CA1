@@ -9,8 +9,16 @@ Student Name: `Marcos Vinicius de Oliveira`
 
 Student Number: `2023323`
 
-## Introduction
+## Submission Requirements
+- [x] Datasets uploaded on Moodle.
+- [x] Code named `2023323_Marcos_Oliveira_CA1.R` uploaded on moodle.
+- [x] Project report uploaded on Moodle.
+- [x] GitHub 5 commits or more before submission.
+- [x] Number of words added to the cover page.
+- [x] References in HARVARD Style.
+- [x] Upload a CCT Assessment Cover Page
 
+## Introduction
 As the world suffered from the COVID-19 pandemic, the role of vaccination was crucial for stopping the spread of the virus. The European Union and European Economic Area (EU/EEA), with their collective efforts towards healthcare and disease prevention, present a unique landscape of vaccination strategies for its diverse population.
 
 The EU/EEA, with an estimated population of over 447 million across its member countries, has been tackling the pandemic through a coordinated vaccination schema. Known for its integrated approach to healthcare, the region has witnessed varied vaccination rates and patterns that set it apart from other global entities.
@@ -29,7 +37,15 @@ My motivation for doing this analysis comes from both a personal and academic pe
 The data used in this study is sourced from the European Centre for Disease Prevention and Control (ECDC), an agency of the European Union dedicated to strengthening Europe's defences against infectious diseases. Specifically, the dataset focuses on a detailed record related to COVID-19 vaccination in the EU/EEA (European Union/European Economic Area) countries.
 
 ## References
-References goes here...
+listBrownlee, J. (2017). Why One-Hot Encode Data in Machine Learning? [online] Machine Learning Mastery. Available at: https://machinelearningmastery.com/why-one-hot-encode-data-in-machine-learning/ [Accessed 29 Nov. 2023].
+
+ECDC Europa (2021). Data on the Daily Number of New Reported COVID-19 Cases and Deaths by EU/EEA Country. [online] European Centre for Disease Prevention and Control. Available at: https://www.ecdc.europa.eu/en/publications-data/data-daily-new-cases-covid-19-eueea-country [Accessed 19 Nov. 2023].
+
+Kaplan, J. & Schlegel, B. (2023). fastDummies: Fast Creation of Dummy (Binary) Columns and Rows from Categorical Variables. Version 1.7.1. Available at: https://github.com/jacobkap/fastDummies, https://jacobkap.github.io/fastDummies/ [Accessed 20 Nov. 2023].
+
+University of Toronto Libraries (2020). COVID-19 Data in R | Map and Data Library. [online] mdl.library.utoronto.ca. Available at: https://mdl.library.utoronto.ca/technology/tutorials/covid-19-data-r#cleaningdata [Accessed 20 Nov. 2023].
+
+Villasante Soriano, P. and Kebabci, C. (2023). Draw Biplot of PCA in R (2 Examples) | biplot() & fviz_pca_biplot(). [online] Statistics Globe. Available at: https://statisticsglobe.com/biplot-pca-r [Accessed 1 Dec. 2023].
 
 ## Copyright Disclaimer
 Please note that this project is part of CCT College, however, it may contain some part of the code that may be copyrighted, if so, please contact me so I can delete or give due to copyright. All references about this project are in the `"References"` section above.
